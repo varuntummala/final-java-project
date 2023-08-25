@@ -124,14 +124,7 @@ public class AddressBook {
     private static ArrayList<AddressBook> removeEntry(String emailAddress,ArrayList<AddressBook> addressBook){
 
         boolean isFound = false;
-//        for(AddressBook addressBook1 : addressBook){
-//            if(addressBook1.getEmailAddress().equals(emailAddress)){
-//                addressBook.remove(addressBook1);
-//                System.out.println("Deleted the following entry:");
-//                System.out.println(addressBook1);
-//                isFound = true;
-//            }
-//        }
+
         Iterator<AddressBook> iterator = addressBook.iterator();
 
         while (iterator.hasNext()){
@@ -304,7 +297,6 @@ public class AddressBook {
                 AddressBook.mainPrompt();
 
             } catch (NumberFormatException e) {
-//            throw new RuntimeException(e);
                 System.out.println("You have entered an invalid value.");
                 AddressBook.mainPrompt();
                 tryCount =tryCount+1;
