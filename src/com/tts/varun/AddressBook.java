@@ -1,7 +1,10 @@
 package com.tts.varun;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Scanner;
+
+import static java.lang.System.exit;
 
 public class AddressBook {
 
@@ -55,12 +58,12 @@ public class AddressBook {
 
     @Override
     public String toString() {
-        return "AddressBook{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", phoneNumber=" + phoneNumber +
-                ", emailAddress='" + emailAddress + '\'' +
-                '}';
+        return "************\n" +
+                "First Name: " + firstName + "\n" +
+                "Last Name: " + lastName + "\n" +
+                "Phone Number: " + phoneNumber + "\n" +
+                "Email: " + emailAddress + "\n" +
+                "************\n";
     }
 
 
@@ -78,7 +81,7 @@ public class AddressBook {
         ArrayList<AddressBook> searchResult = new ArrayList<>();
 
         for (AddressBook addressBook1 : addressBook) {
-            if (addressBook1.getFirstName().equals(firstName)) {
+            if (addressBook1.getFirstName().startsWith(firstName)) {
                 searchResult.add(addressBook1);
             }
         }
@@ -89,7 +92,7 @@ public class AddressBook {
         ArrayList<AddressBook> searchResult = new ArrayList<>();
 
         for (AddressBook addressBook1 : addressBook) {
-            if (addressBook1.getLastName().equals(lastName)) {
+            if (addressBook1.getLastName().startsWith(lastName)) {
                 searchResult.add(addressBook1);
             }
         }
@@ -111,11 +114,40 @@ public class AddressBook {
         ArrayList<AddressBook> searchResult = new ArrayList<>();
 
         for (AddressBook addressBook1 : addressBook) {
-            if (addressBook1.getEmailAddress().equals(emailAddress)) {
+            if (addressBook1.getEmailAddress().startsWith(emailAddress)) {
                 searchResult.add(addressBook1);
             }
         }
         return searchResult.toString();
+    }
+
+    private static ArrayList<AddressBook> removeEntry(String emailAddress,ArrayList<AddressBook> addressBook){
+
+        boolean isFound = false;
+//        for(AddressBook addressBook1 : addressBook){
+//            if(addressBook1.getEmailAddress().equals(emailAddress)){
+//                addressBook.remove(addressBook1);
+//                System.out.println("Deleted the following entry:");
+//                System.out.println(addressBook1);
+//                isFound = true;
+//            }
+//        }
+        Iterator<AddressBook> iterator = addressBook.iterator();
+
+        while (iterator.hasNext()){
+            AddressBook tmpAddressBook = iterator.next();
+            if (tmpAddressBook.getEmailAddress().equals(emailAddress)){
+                System.out.println("Deleted the following entry:");
+                System.out.println(tmpAddressBook.toString());
+                iterator.remove();
+                isFound = true;
+            }
+        }
+        if (!isFound){
+            System.out.println("\nEntry not found!");
+        }
+
+        return addressBook;
     }
 
     public static void main(String[] args) {
@@ -129,134 +161,158 @@ public class AddressBook {
 
         AddressBook.mainPrompt();
 
-
+        int tryCount = 0;
+        int maxTryCount = 3;
 
         Scanner scanner = new Scanner(System.in);
-        int mainSelection = Integer.parseInt(scanner.nextLine());
-//
-        while ( mainSelection < 6 ){
-        switch (mainSelection){
 
-            case 1:
-            {
-                System.out.println("First Name:");
-                firstName = scanner.nextLine();
+        while (tryCount < maxTryCount){ // Allow only maximum 3 invalid retries
+            try {
+                int mainSelection = Integer.parseInt(scanner.nextLine());
 
-                System.out.println("Last Name:");
-                lastName = scanner.nextLine();
+                while ( mainSelection <= 6 ){
+                    switch (mainSelection){
 
-                System.out.println("Phone Number:");
-                phoneNumber = Long.parseLong(scanner.nextLine());
+                        case 1:
+                        {
+                            System.out.println("First Name:");
+                            firstName = scanner.nextLine();
 
-                System.out.println("Email Address:");
-                emailAddress = scanner.nextLine();
+                            System.out.println("Last Name:");
+                            lastName = scanner.nextLine();
 
-                addressBook.add(new AddressBook(firstName,lastName,phoneNumber,emailAddress));
-                AddressBook.mainPrompt();
+                            System.out.println("Phone Number:");
+                            phoneNumber = Long.parseLong(scanner.nextLine());
 
-                break;
-            }
-            case 2:
-            {
-                System.out.println("\nEnter an entry's email to remove:");
-                emailAddress = scanner.nextLine();
+                            System.out.println("Email Address:");
+                            emailAddress = scanner.nextLine();
+
+                            addressBook.add(new AddressBook(firstName,lastName,phoneNumber,emailAddress));
+                            AddressBook.mainPrompt();
+
+                            break;
+                        }
+                        case 2:
+                        {
+                            System.out.println("\nEnter an entry's email to remove:");
+                            emailAddress = scanner.nextLine();
+
+                            System.out.println("DEBUG: "+emailAddress);
+
+                            AddressBook.removeEntry(emailAddress,addressBook);
+                            AddressBook.mainPrompt();
+
+                            break;
+                        }
+                        case 3:
+                        {
+                            System.out.println("1) First Name\n" +
+                                    "2) Last Name\n" +
+                                    "3) Phone Number\n" +
+                                    "4) Email Address\n" +
+                                    "Chose a search type:");
+                            int searchSelection = Integer.parseInt(scanner.nextLine());
 
 
-                break;
-            }
-            case 3:
-            {
-                System.out.println("1) First Name\n" +
-                        "2) Last Name\n" +
-                        "3) Phone Number\n" +
-                        "4) Email Address\n" +
-                        "Chose a search type:");
-                int searchSelection = Integer.parseInt(scanner.nextLine());
+                            switch (searchSelection){
+                                case 1:
+                                {
+                                    System.out.println("\nEnter your search:");
+                                    String firstNameForSearch = scanner.nextLine();
 
-                System.out.println("\nEnter your search:");
+                                    System.out.println(AddressBook.searchFirstName(firstNameForSearch,addressBook));
+                                    AddressBook.mainPrompt();
+                                    break;
+                                }
+                                case 2:
+                                {
+                                    System.out.println("\nEnter your search:");
+                                    String lastNameForSearch = scanner.nextLine();
 
-                switch (searchSelection){
-                    case 1:
-                    {
-                        System.out.println("\nEnter your search:");
-                        String firstNameForSearch = scanner.nextLine();
+                                    System.out.println(AddressBook.searchLastname(lastNameForSearch,addressBook));
+                                    AddressBook.mainPrompt();
+                                    break;
 
-                        System.out.println(AddressBook.searchFirstName(firstNameForSearch,addressBook));
-                        AddressBook.mainPrompt();
-                        break;
+                                }
+                                case 3:
+                                {
+                                    System.out.println("\nEnter your search:");
+                                    long phoneNumberForSearch = Long.parseLong(scanner.nextLine());
+
+                                    System.out.println(AddressBook.searchPhoneNumber(phoneNumberForSearch,addressBook));
+                                    AddressBook.mainPrompt();
+                                    break;
+
+                                }
+                                case 4:
+                                {
+                                    System.out.println("\nEnter your search:");
+                                    String emailAddressForSearch = scanner.nextLine();
+
+                                    System.out.println(AddressBook.searchEmailAddress(emailAddressForSearch,addressBook));
+                                    AddressBook.mainPrompt();
+                                    break;
+
+                                }
+                                default:
+                                {
+                                    System.out.println("\nInvalid search option.");
+                                    AddressBook.mainPrompt();
+                                    break;
+                                }
+                            }
+
+                            break;
+                        }
+
+                        case 4:
+                        {
+                            System.out.println(addressBook.toString());
+                            AddressBook.mainPrompt();
+                            break;
+                        }
+
+                        case 5:
+                        {
+                            addressBook.clear();
+                            System.out.println("Address Book cleared.");
+                            AddressBook.mainPrompt();
+                            break;
+                        }
+
+                        case 6:
+                        {
+                            System.out.println("Thank you for using my Address Book. Good Bye!");
+                            System.exit(0);
+                        }
+
+                        default:
+                        {
+                            System.out.println("You have entered an invalid value.");
+                            tryCount = tryCount+1;
+                            AddressBook.mainPrompt();
+                        }
+
                     }
-                    case 2:
-                    {
-                        System.out.println("\nEnter your search:");
-                        String lastNameForSearch = scanner.nextLine();
+                    mainSelection = Integer.parseInt(scanner.nextLine());
 
-                        System.out.println(AddressBook.searchLastname(lastNameForSearch,addressBook));
-                        AddressBook.mainPrompt();
-                        break;
-
-                    }
-                    case 3:
-                    {
-                        System.out.println("\nEnter your search:");
-                        long phoneNumberForSearch = Long.parseLong(scanner.nextLine());
-
-                        System.out.println(AddressBook.searchPhoneNumber(phoneNumberForSearch,addressBook));
-                        AddressBook.mainPrompt();
-                        break;
-
-                    }
-                    case 4:
-                    {
-                        System.out.println("\nEnter your search:");
-                        String emailAddressForSearch = scanner.nextLine();
-
-                        System.out.println(AddressBook.searchEmailAddress(emailAddressForSearch,addressBook));
-                        AddressBook.mainPrompt();
-                        break;
-
-                    }
-                    default:
-                    {
-                        System.out.println("\nInvalid search option.");
-                        AddressBook.mainPrompt();
-                        break;
-                    }
                 }
 
-                break;
-            }
-
-            case 4:
-            {
-                System.out.println(addressBook.toString());
+                //Catch any main selection greater than 6
+                System.out.println("You have entered an invalid value.");
+                tryCount = tryCount+1;
                 AddressBook.mainPrompt();
-                break;
-            }
 
-            case 5:
-            {
-                addressBook.clear();
+            } catch (NumberFormatException e) {
+//            throw new RuntimeException(e);
+                System.out.println("You have entered an invalid value.");
                 AddressBook.mainPrompt();
-                break;
-            }
-
-            case 6:
-            {
-                break;
-            }
-
-            default:
-            {
-                System.out.println("\nInvalid search option.");
-                AddressBook.mainPrompt();
+                tryCount =tryCount+1;
             }
 
         }
-             mainSelection = Integer.parseInt(scanner.nextLine());
 
-        }
-
-
+        System.out.println("Too many invalid inputs entered. Terminating..");
 
     }
 
